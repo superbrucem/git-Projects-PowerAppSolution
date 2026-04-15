@@ -1,0 +1,83 @@
+# ================================================================
+# Workflow 1 - Export Solution from DEV
+# ================================================================
+# Trigger: Manual (Actions tab → Run workflow)
+# What it does:
+#   1. Connects to LAB Dev environment
+#   2. Exports the solution as unmanaged
+#   3. Unpacks it into src/PowerAppsSolution (including canvas app source)
+#   4. Commits & pushes the changes back to the dev branch
+#
+# Required GitHub Repository Secrets (Settings → Secrets → Actions):
+#   POWER_PLATFORM_SP_APP_ID      - Azure App Registration Client ID
+#   POWER_PLATFORM_SP_CLIENT_SECRET - Azure App Registration Secret
+#   POWER_PLATFORM_TENANT_ID      - Your Azure AD Tenant ID
+#
+# Required GitHub Repository Variables (Settings → Variables → Actions):
+#   DEV_ENVIRONMENT_URL = https://org71df5d57.crm3.dynamics.com
+# ================================================================
+
+name: "1 - Export Solution from DEV"
+
+on:
+  workflow_dispatch:
+    inputs:
+      solution_name:
+        description: "Solution name to export"
+        required: true
+        default: "PowerAppsSolution"
+
+env:
+  SOLUTION_NAME:   ${{ github.event.inputs.solution_name }}
+  SOLUTION_FOLDER: src/${{ github.event.inputs.solution_name }}
+  SOLUTION_ZIP:    out/${{ github.event.inputs.solution_name }}.zip
+
+jobs:
+  export-from-dev:
+    runs-on: windows-latest
+    steps:
+      # ── 1. Checkout repo ──────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      # ── 2. Install Power Platform CLI / Actions tooling ───────
+      - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+
+      # ── 3. Export unmanaged solution from DEV ─────────────────
+      - name: Export Solution (unmanaged)
+        uses: microsoft/powerplatform-actions/export-solution@v1
+        with:
+          environment-url:  ${{ vars.DEV_ENVIRONMENT_URL }}
+          app-id:           ${{ secrets.POWER_PLATFORM_SP_APP_ID }}
+          client-secret:    ${{ secrets.POWER_PLATFORM_SP_CLIENT_SECRET }}
+          tenant-id:        ${{ secrets.POWER_PLATFORM_TENANT_ID }}
+          solution-name:    ${{ env.SOLUTION_NAME }}
+          solution-output-file: ${{ env.SOLUTION_ZIP }}
+          managed: false
+
+      # ── 4. Unpack solution (including canvas app source) ──────
+      - name: Unpack Solution
+        uses: microsoft/powerplatform-actions/unpack-solution@v1
+        with:
+          solution-file:        ${{ env.SOLUTION_ZIP }}
+          solution-folder:      ${{ env.SOLUTION_FOLDER }}
+          solution-type:        Unmanaged
+          process-canvas-apps:  true
+          allow-delete:         true
+
+      # ── 5. Commit unpacked source back to dev branch ──────────
+      - name: Commit & Push to dev
+        shell: bash
+        run: |
+          git config user.name  "GitHub Actions [export-bot]"
+          git config user.email "actions@github.com"
+          git add "${{ env.SOLUTION_FOLDER }}"
+          if git diff --staged --quiet; then
+            echo "No changes to commit - solution is already up to date."
+          else
+            git commit -m "chore: export ${{ env.SOLUTION_NAME }} from DEV [skip ci]"
+            git push
+          fi

@@ -1,0 +1,84 @@
+# ================================================================
+# Workflow 3 - Deploy Solution to LAB PROD
+# ================================================================
+# Triggers:
+#   - Automatically when code is pushed/merged to the `main` branch
+#   - Manually from the Actions tab
+#
+# What it does:
+#   1. Packs src/PowerAppsSolution → MANAGED zip  ← key difference vs UAT
+#   2. Imports the managed zip into LAB PROD
+#   3. Publishes all customizations
+#
+# WHY MANAGED for PROD?
+#   Managed solutions lock the app in PROD so no one can directly edit it.
+#   All changes must flow through Git → DEV → UAT → PROD. Best practice.
+#
+# GitHub Environments used: PROD
+#   → Go to Settings → Environments → New environment → "PROD"
+#   → STRONGLY recommended: add Required reviewers (approval gate before PROD)
+#
+# Required GitHub Secrets (repo or PROD environment level):
+#   POWER_PLATFORM_SP_APP_ID
+#   POWER_PLATFORM_SP_CLIENT_SECRET
+#   POWER_PLATFORM_TENANT_ID
+#
+# Required GitHub Repository Variables:
+#   PROD_ENVIRONMENT_URL = https://orgd8238401.crm3.dynamics.com
+# ================================================================
+
+name: "3 - Deploy to LAB PROD"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "src/**"
+  workflow_dispatch:
+    inputs:
+      solution_name:
+        description: "Solution name to deploy"
+        required: true
+        default: "PowerAppsSolution"
+
+env:
+  SOLUTION_NAME: ${{ github.event.inputs.solution_name || 'PowerAppsSolution' }}
+
+jobs:
+  deploy-to-prod:
+    runs-on: windows-latest
+    environment: PROD           # Links to the GitHub Environment named "PROD"
+
+    steps:
+      # ── 1. Checkout ───────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      # ── 2. Install tooling ────────────────────────────────────
+      - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+
+      # ── 3. Pack source → MANAGED zip ─────────────────────────
+      - name: Pack Solution (Managed)
+        uses: microsoft/powerplatform-actions/pack-solution@v1
+        with:
+          solution-folder:     src/${{ env.SOLUTION_NAME }}
+          solution-file:       out/${{ env.SOLUTION_NAME }}_managed.zip
+          solution-type:       Managed
+          process-canvas-apps: true
+
+      # ── 4. Import MANAGED solution to LAB PROD ────────────────
+      - name: Import to LAB PROD
+        uses: microsoft/powerplatform-actions/import-solution@v1
+        with:
+          environment-url:  ${{ vars.PROD_ENVIRONMENT_URL }}
+          app-id:           ${{ secrets.POWER_PLATFORM_SP_APP_ID }}
+          client-secret:    ${{ secrets.POWER_PLATFORM_SP_CLIENT_SECRET }}
+          tenant-id:        ${{ secrets.POWER_PLATFORM_TENANT_ID }}
+          solution-file:    out/${{ env.SOLUTION_NAME }}_managed.zip
+          force-overwrite:  true
+          publish-changes:  true
+          skip-dependency-check: false

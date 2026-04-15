@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <systemform>
+    <formid>{7516edd7-8597-46eb-a2a2-bf45da69010f}</formid>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <FormPresentation>1</FormPresentation>
+    <FormActivationState>1</FormActivationState>
+    <form>
+      <tabs>
+        <tab verticallayout="true" id="{969180C4-3A0B-44EB-81CB-30704BA8D27C}" IsUserDefined="1">
+          <labels>
+            <label description="General" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section showlabel="false" showbar="false" IsUserDefined="0" id="{AC6E6869-86CC-416A-A144-FEEA29452495}">
+                  <labels>
+                    <label description="General" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{7679C42B-46CF-4B9D-A6CC-A593778915D4}">
+                        <labels>
+                          <label description="" languagecode="1033" />
+                        </labels>
+                        <control id="bm_graphicname" classid="{4273EDBD-AC1D-40d3-9FB2-095C621B552D}" datafieldname="bm_GraphicName" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{CBA5F67A-35BA-4C81-91E1-1B3C6D7A81E1}">
+                        <labels>
+                          <label description="Owner" languagecode="1033" />
+                        </labels>
+                        <control id="ownerid" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="ownerid" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{d9b9018c-a648-4a74-9cd6-064bc0515317}">
+                        <labels>
+                          <label description="Graphic Type" languagecode="1033" />
+                        </labels>
+                        <control id="bm_graphictype" classid="{3ef39988-22bb-4f0b-bbbe-64b5a3748aee}" datafieldname="bm_graphictype" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{1247e7a8-030a-4929-9b0a-f7f86962e105}">
+                        <labels>
+                          <label description="Created Date" languagecode="1033" />
+                        </labels>
+                        <control id="bm_createddate" classid="{5b773807-9fb2-42db-97c3-7a91eff8adff}" datafieldname="bm_createddate" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{7b43132c-7d12-4950-93bf-7dc5af3c2b7a}">
+                        <labels>
+                          <label description="Is Public" languagecode="1033" />
+                        </labels>
+                        <control id="bm_ispublic" classid="{67fac785-cd58-4f9f-abb3-4b7ddc6ed5ed}" datafieldname="bm_ispublic" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+      </tabs>
+    </form>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <LocalizedNames>
+      <LocalizedName description="Information" languagecode="1033" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="A form for this entity." languagecode="1033" />
+    </Descriptions>
+  </systemform>
+</forms>

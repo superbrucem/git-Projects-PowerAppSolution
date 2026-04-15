@@ -1,0 +1,80 @@
+# ================================================================
+# Workflow 2 - Deploy Solution to LAB UAT
+# ================================================================
+# Triggers:
+#   - Automatically when code is pushed/merged to the `uat` branch
+#   - Manually from the Actions tab (with optional solution override)
+#
+# What it does:
+#   1. Packs src/PowerAppsSolution → unmanaged zip
+#   2. Imports the unmanaged zip into LAB UAT
+#   3. Publishes all customizations
+#
+# GitHub Environments used: UAT
+#   → Go to Settings → Environments → New environment → "UAT"
+#   → Optionally add Required reviewers for approval gate
+#
+# Required GitHub Secrets (repo or UAT environment level):
+#   POWER_PLATFORM_SP_APP_ID
+#   POWER_PLATFORM_SP_CLIENT_SECRET
+#   POWER_PLATFORM_TENANT_ID
+#
+# Required GitHub Repository Variables:
+#   UAT_ENVIRONMENT_URL = https://orgcbcd6963.crm3.dynamics.com
+# ================================================================
+
+name: "2 - Deploy to LAB UAT"
+
+on:
+  push:
+    branches:
+      - uat
+    paths:
+      - "src/**"
+  workflow_dispatch:
+    inputs:
+      solution_name:
+        description: "Solution name to deploy"
+        required: true
+        default: "PowerAppsSolution"
+
+env:
+  SOLUTION_NAME: ${{ github.event.inputs.solution_name || 'PowerAppsSolution' }}
+
+jobs:
+  deploy-to-uat:
+    runs-on: windows-latest
+    environment: UAT            # Links to the GitHub Environment named "UAT"
+
+    steps:
+      # ── 1. Checkout ───────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      # ── 2. Install tooling ────────────────────────────────────
+      - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+
+      # ── 3. Pack source → unmanaged zip ───────────────────────
+      - name: Pack Solution (Unmanaged)
+        uses: microsoft/powerplatform-actions/pack-solution@v1
+        with:
+          solution-folder:     src/${{ env.SOLUTION_NAME }}
+          solution-file:       out/${{ env.SOLUTION_NAME }}_unmanaged.zip
+          solution-type:       Unmanaged
+          process-canvas-apps: true
+
+      # ── 4. Import to LAB UAT ──────────────────────────────────
+      - name: Import to LAB UAT
+        uses: microsoft/powerplatform-actions/import-solution@v1
+        with:
+          environment-url:  ${{ vars.UAT_ENVIRONMENT_URL }}
+          app-id:           ${{ secrets.POWER_PLATFORM_SP_APP_ID }}
+          client-secret:    ${{ secrets.POWER_PLATFORM_SP_CLIENT_SECRET }}
+          tenant-id:        ${{ secrets.POWER_PLATFORM_TENANT_ID }}
+          solution-file:    out/${{ env.SOLUTION_NAME }}_unmanaged.zip
+          force-overwrite:  true
+          publish-changes:  true
+          skip-dependency-check: false
