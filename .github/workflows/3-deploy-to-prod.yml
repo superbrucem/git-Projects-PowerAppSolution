@@ -59,20 +59,19 @@ jobs:
 
       # ── 2. Install tooling ────────────────────────────────────
       - name: Install Power Platform Tools
-        uses: microsoft/powerplatform-actions/actions-install@v1
+        uses: microsoft/powerplatform-actions/actions-install@v2
 
       # ── 3. Pack source → MANAGED zip ─────────────────────────
       - name: Pack Solution (Managed)
-        uses: microsoft/powerplatform-actions/pack-solution@v1
+        uses: microsoft/powerplatform-actions/pack-solution@v2
         with:
-          solution-folder:     src/${{ env.SOLUTION_NAME }}
-          solution-file:       out/${{ env.SOLUTION_NAME }}_managed.zip
-          solution-type:       Managed
-          process-canvas-apps: true
+          solution-folder:  src/${{ env.SOLUTION_NAME }}
+          solution-file:    out/${{ env.SOLUTION_NAME }}_managed.zip
+          solution-type:    Managed
 
       # ── 4. Import MANAGED solution to LAB PROD ────────────────
       - name: Import to LAB PROD
-        uses: microsoft/powerplatform-actions/import-solution@v1
+        uses: microsoft/powerplatform-actions/import-solution@v2
         with:
           environment-url:  ${{ vars.PROD_ENVIRONMENT_URL }}
           app-id:           ${{ secrets.POWER_PLATFORM_SP_APP_ID }}

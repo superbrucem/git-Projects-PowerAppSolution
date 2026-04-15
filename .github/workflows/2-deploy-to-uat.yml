@@ -55,20 +55,19 @@ jobs:
 
       # ── 2. Install tooling ────────────────────────────────────
       - name: Install Power Platform Tools
-        uses: microsoft/powerplatform-actions/actions-install@v1
+        uses: microsoft/powerplatform-actions/actions-install@v2
 
       # ── 3. Pack source → unmanaged zip ───────────────────────
       - name: Pack Solution (Unmanaged)
-        uses: microsoft/powerplatform-actions/pack-solution@v1
+        uses: microsoft/powerplatform-actions/pack-solution@v2
         with:
-          solution-folder:     src/${{ env.SOLUTION_NAME }}
-          solution-file:       out/${{ env.SOLUTION_NAME }}_unmanaged.zip
-          solution-type:       Unmanaged
-          process-canvas-apps: true
+          solution-folder:  src/${{ env.SOLUTION_NAME }}
+          solution-file:    out/${{ env.SOLUTION_NAME }}_unmanaged.zip
+          solution-type:    Unmanaged
 
       # ── 4. Import to LAB UAT ──────────────────────────────────
       - name: Import to LAB UAT
-        uses: microsoft/powerplatform-actions/import-solution@v1
+        uses: microsoft/powerplatform-actions/import-solution@v2
         with:
           environment-url:  ${{ vars.UAT_ENVIRONMENT_URL }}
           app-id:           ${{ secrets.POWER_PLATFORM_SP_APP_ID }}
