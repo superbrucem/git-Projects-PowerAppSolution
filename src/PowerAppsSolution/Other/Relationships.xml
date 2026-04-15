@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<EntityRelationships xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <EntityRelationship Name="business_unit_bm_graphic" />
+  <EntityRelationship Name="business_unit_bm_project" />
+  <EntityRelationship Name="business_unit_bm_weburl" />
+  <EntityRelationship Name="lk_bm_graphic_createdby" />
+  <EntityRelationship Name="lk_bm_graphic_modifiedby" />
+  <EntityRelationship Name="lk_bm_project_createdby" />
+  <EntityRelationship Name="lk_bm_project_modifiedby" />
+  <EntityRelationship Name="lk_bm_weburl_createdby" />
+  <EntityRelationship Name="lk_bm_weburl_modifiedby" />
+  <EntityRelationship Name="owner_bm_graphic" />
+  <EntityRelationship Name="owner_bm_project" />
+  <EntityRelationship Name="owner_bm_weburl" />
+  <EntityRelationship Name="team_bm_graphic" />
+  <EntityRelationship Name="team_bm_project" />
+  <EntityRelationship Name="team_bm_weburl" />
+  <EntityRelationship Name="user_bm_graphic" />
+  <EntityRelationship Name="user_bm_project" />
+  <EntityRelationship Name="user_bm_weburl" />
+</EntityRelationships>
