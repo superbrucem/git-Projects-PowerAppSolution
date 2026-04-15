@@ -57,13 +57,13 @@ jobs:
       - name: Install Power Platform Tools
         uses: microsoft/powerplatform-actions/actions-install@v1
 
-      # ── 3. Pack source → unmanaged zip ───────────────────────
-      - name: Pack Solution (Unmanaged)
+      # ── 3. Pack source → managed zip ─────────────────────────
+      - name: Pack Solution (Managed)
         uses: microsoft/powerplatform-actions/pack-solution@v1
         with:
           solution-folder:  src/${{ env.SOLUTION_NAME }}
-          solution-file:    out/${{ env.SOLUTION_NAME }}_unmanaged.zip
-          solution-type:    Unmanaged
+          solution-file:    out/${{ env.SOLUTION_NAME }}_managed.zip
+          solution-type:    Managed
 
       # ── 4. Import to LAB UAT ──────────────────────────────────
       - name: Import to LAB UAT
@@ -73,7 +73,7 @@ jobs:
           app-id:           ${{ secrets.POWER_PLATFORM_SP_APP_ID }}
           client-secret:    ${{ secrets.POWER_PLATFORM_SP_CLIENT_SECRET }}
           tenant-id:        ${{ secrets.POWER_PLATFORM_TENANT_ID }}
-          solution-file:    out/${{ env.SOLUTION_NAME }}_unmanaged.zip
+          solution-file:    out/${{ env.SOLUTION_NAME }}_managed.zip
           force-overwrite:  true
           publish-changes:  true
           skip-dependency-check: false
